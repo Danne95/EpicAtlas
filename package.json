@@ -1,0 +1,23 @@
+{
+  "name": "epic-atlas",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "check": "tsc --noEmit",
+    "test": "node --test tests/atlas.test.mjs tests/workspace.test.mjs",
+    "test:tools": "python -m unittest discover -s tests",
+    "build": "npm run check && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "maplibre-gl": "^6.11.2"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "esbuild": "^0.28.2",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1"
+  }
+}

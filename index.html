@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#050a10" />
+    <title>EpicAtlas — Your world, explored</title>
+    <link rel="icon" type="image/svg+xml" href="/src/assets/epicatlas.svg" />
+  </head>
+  <body>
+    <main id="app">
+      <div id="map" aria-label="Interactive 2D world map"></div>
+      <section class="intro" aria-label="Travel controls">
+        <p class="map-status" id="map-status" role="status">Loading your world…</p>
+        <button id="edit-travel" type="button">Edit travel</button>
+        <button id="water-view" class="route-view water-view" type="button" hidden>View water routes ↗</button>
+        <details class="places">
+          <summary id="location-count">Loading saved places…</summary>
+          <div id="location-list"></div>
+        </details>
+      </section>
+      <section class="travel-strip" aria-label="Timeline and travel status">
+        <button id="open-timeline" type="button" disabled>Timeline</button>
+        <div class="travel-strip-status"><p id="timeline-summary" class="status-note">Timeline: all history</p><p id="travel-view-status" class="status-note">Loading saved travel…</p></div>
+        <div id="chronology-map" aria-label="Map playback controls" hidden><p id="chronology-map-date" role="status"></p><button id="chronology-map-play" type="button">Play playback</button><button id="chronology-map-reset" type="button">Restart playback</button></div>
+      </section>
+      <section class="display-dock" aria-label="Map display controls">
+        <button id="globe-view" type="button" aria-pressed="false" aria-label="3D globe" disabled><span class="projection-flat" aria-hidden="true">2D map</span><span class="projection-globe" aria-hidden="true">3D globe</span></button>
+        <p id="projection-status" class="status-note" role="status">2D map</p>
+        <div class="zoom-controls" role="group" aria-label="Map zoom"><button id="zoom-minus" type="button" aria-label="Decrease zoom" disabled>−</button><button id="world-view" type="button">Zoom out</button><button id="zoom-plus" type="button" aria-label="Increase zoom" disabled>+</button></div>
+        <details class="layer-panel" open>
+          <summary>Map layers</summary>
+          <div class="layer-options"><p id="layer-loading">Loading layers…</p><div id="layer-controls"></div>
+          <label class="layer-option country-option"><input id="country-highlights" type="checkbox" disabled /><span><span class="layer-name">Countries with places</span><span id="country-highlight-status" class="layer-count" role="status">Loading country shapes…</span></span></label></div>
+        </details>
+      </section>
+      <dialog id="timeline-dialog" aria-labelledby="timeline-title">
+        <div class="editor-heading"><h2 id="timeline-title">Travel timeline</h2><button id="close-timeline" type="button">Close timeline</button></div>
+        <form><div class="timeline-year"><label>Year<input id="timeline-year" type="number" min="1" max="9999" step="1" placeholder="2026" /></label><button id="timeline-use-year" type="button">Use year</button></div>
+          <label>Start date (optional)<input id="timeline-start" type="date" min="0001-01-01" max="9999-12-31" /></label>
+          <label>End date (optional)<input id="timeline-end" type="date" min="0001-01-01" max="9999-12-31" /></label>
+          <label class="timeline-checkbox"><input id="timeline-undated" type="checkbox" checked /> Include undated / unrecognized dates</label>
+          <div class="editor-actions"><button type="submit">Apply timeline</button><button id="timeline-reset" type="button">All history</button></div>
+        </form><p id="timeline-status" role="status">Loading travel dates…</p>
+        <section class="chronology-controls" aria-label="Chronology playback"><h3>Chronology playback</h3><label>Playback speed<select id="chronology-speed"><option value="1500">Slow</option><option value="800" selected>Normal</option><option value="250">Fast</option></select></label><label>Chronology position<input id="chronology-progress" type="range" min="0" max="0" value="0" disabled /></label><div class="editor-actions"><button id="chronology-play" type="button">Play</button><button id="chronology-reset" type="button">Restart playback</button></div><p id="chronology-status" role="status"></p></section>
+        <p class="timeline-note">Playback reveals cumulative history at dated events and pauses in background tabs. Year/month periods appear when they first overlap, without implying an exact travel day. Filtering changes the view only; saved travel and regional references are kept.</p>
+      </dialog>
+      <dialog id="travel-editor" aria-labelledby="editor-title">
+        <div class="editor-heading"><div><p class="eyebrow">YOUR TRAVEL</p><h2 id="editor-title">Places &amp; journeys</h2></div><button id="close-editor" type="button" aria-label="Close travel editor">Close</button></div>
+        <p id="editor-status" role="status"></p>
+        <div class="editor-actions"><button id="show-personal" type="button">Show my travel</button><button id="export-travel" type="button">Export backup</button><a id="backup-download" hidden>Download backup</a><button id="copy-travel" type="button">Copy backup</button></div>
+        <div class="editor-columns">
+          <section aria-label="Saved travel"><h3>Saved travel</h3><div id="saved-records"></div></section>
+          <section aria-label="Record details"><form id="record-form"><label>Record type<select id="record-kind"><option value="locations">Place</option><option value="roads">Road</option><option value="rail">Rail</option><option value="water">Water</option><option value="flights">Flight</option></select></label><div id="record-fields"></div><div class="editor-actions"><button id="save-record" type="submit">Save record</button><button id="new-record" type="button">Clear form</button></div></form></section>
+        </div>
+        <section class="editor-imports"><h3>Import &amp; restore</h3><label>Import route GeoJSON<input id="route-import" type="file" accept=".geojson,.json,application/json" /></label><label>Choose workspace backup<input id="backup-import" type="file" accept=".json,application/json" /></label><button id="restore-travel" type="button" hidden>Replace saved travel with backup</button><p>Travel saves automatically to your private file on this device. Export a backup to keep another copy. Raw GPX/KML files can be converted with the local route tool.</p></section>
+      </dialog>
+      <div class="error-panel" id="map-error" role="alert" hidden>
+        <p id="error-message"></p><button id="retry" type="button">Try again</button>
+      </div>
+      <footer class="map-footer"><span>Natural Earth · <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">© OpenStreetMap contributors</a></span></footer>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

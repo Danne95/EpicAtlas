@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.verification/
+*.log
+# Private inputs, exports, downloaded maps, and regional recipes stay local.
+/private/
+/public/travel/
+/public/maps/
+/tools/regions/
+*.pmtiles
+*.gpx
+*.kml
+*.geojson
+epicatlas-backup-*.json
+__pycache__/
